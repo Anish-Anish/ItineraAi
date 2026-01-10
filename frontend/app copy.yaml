@@ -1,0 +1,33 @@
+runtime: nodejs20
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 10
+  target_cpu_utilization: 0.6
+  target_throughput_utilization: 0.6
+
+env_variables:
+  NODE_ENV: production
+  VITE_API_URL: "https://your-backend-api-url.com"
+  VITE_APP_NAME: "Travel Planner"
+
+handlers:
+  # Serve static assets
+  - url: /assets
+    static_dir: dist/assets
+    secure: always
+
+  # Serve other static files (images, css, js, etc.)
+  - url: /(.*\.(ico|png|jpg|jpeg|gif|svg|webp|css|js|json|txt|xml|html))$
+    static_files: dist/\1
+    upload: dist/.*\.(ico|png|jpg|jpeg|gif|svg|webp|css|js|json|txt|xml|html)$
+    secure: always
+
+  # Serve index.html for all routes (React Router support)
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
+
+instance_class: F1
+default_expiration: "1d"
