@@ -307,10 +307,12 @@ dist
 
 # API Keys and sensitive data
 keys/
+# JSON files (except specific ones)
 *.json
 !package.json
 !package-lock.json
 !tsconfig.json
+!tsconfig.node.json
 
 # Service account files
 *service-account*
