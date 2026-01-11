@@ -18,7 +18,8 @@ def create_conversation(conversation_id=None):
         "conversation_id": conversation_id,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow(),
-        "message_count": 0
+        "message_count": 0,
+        "conversation_title": f"New Chat - {datetime.utcnow().strftime('%b %d, %I:%M %p')}"
     }
     
     result = list_conversations_collection.insert_one(conversation)
@@ -28,6 +29,7 @@ def create_conversation(conversation_id=None):
 
 chat_message_collection = get_messages_collection()
 
+
 def store_chat_message(conversation_id, run_id, role, content, metadata=None):
 
     if chat_message_collection is None:
@@ -36,6 +38,7 @@ def store_chat_message(conversation_id, run_id, role, content, metadata=None):
     run_doc = {
         "run_id": run_id,
         "run_created_at": datetime.now(),
+
         "messages":[
             {
                 "role" : role,
@@ -49,11 +52,15 @@ def store_chat_message(conversation_id, run_id, role, content, metadata=None):
         {"conversation_id": conversation_id},
         {
             "$push": {"runs": run_doc},
+            "$set": {
+            "conversation_title": f"Chat - {datetime.now().strftime('%b %d, %I:%M %p')}",
+            "updated_at": datetime.now(),
+             },
             "$setOnInsert": {
                 "conversation_id": conversation_id,
                 "created_at": datetime.now(),
             },
-            "$set": {"updated_at": datetime.now()}
+
         },
         upsert=True
     )
@@ -84,7 +91,7 @@ def append_run_message(conversation_id, run_id, role, content, metadata=None):
     print("insert run chat message done !")
 
 
-def get_conversation_messages(conversation_id):
+def get_conversation_messages(conversation_id, limit=100, skip=0):
     conversation_message_list = get_messages_collection()
 
     conversation = conversation_message_list.find_one(
@@ -125,25 +132,35 @@ def get_conversation_info(conversation_id):
     return conversation
 
 
-def get_all_conversations(limit=50, skip=0):
-    conversations_collection = get_conversations_collection()
+def get_all_conversations_title(limit=50, skip=0):
+    conversations_collection = get_messages_collection()
     
     if conversations_collection is None:
         raise Exception("Database not connected")
-    
+
     conversations = list(
-        conversations_collection.find()
-        .sort("updated_at", -1)  # Sort by most recent first
+        conversations_collection.find(
+            {},
+            {
+                "_id": 0,
+                "conversation_id": 1,
+                "conversation_title": 1,
+                "updated_at": 1,
+                "created_at": 1
+            }
+        )
+        .sort("updated_at", -1)
         .skip(skip)
         .limit(limit)
     )
-    
-    # Convert ObjectId to string for JSON serialization
+
+    # Convert datetime objects to ISO format for JSON serialization
     for conv in conversations:
-        conv["_id"] = str(conv["_id"])
-        conv["created_at"] = conv["created_at"].isoformat()
-        conv["updated_at"] = conv["updated_at"].isoformat()
-    
+        if "updated_at" in conv and conv["updated_at"]:
+            conv["updated_at"] = conv["updated_at"].isoformat()
+        if "created_at" in conv and conv["created_at"]:
+            conv["created_at"] = conv["created_at"].isoformat()
+
     return conversations
 
 

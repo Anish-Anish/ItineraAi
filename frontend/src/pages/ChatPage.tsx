@@ -241,7 +241,7 @@ const ChatPage = () => {
         const transformedConversations = data.conversations.map(
           (conv: any) => ({
             id: conv.conversation_id,
-            title: conv.preview || "Untitled Conversation",
+            title: conv.conversation_title || "Untitled Conversation",
             messages: [], // Will be loaded when conversation is selected
             createdAt: new Date(conv.created_at).getTime(),
             updatedAt: new Date(conv.updated_at).getTime(),

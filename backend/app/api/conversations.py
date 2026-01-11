@@ -3,7 +3,7 @@ from app.database.chat_storage import (
     create_conversation,
     get_conversation_messages,
     get_conversation_info,
-    get_all_conversations,
+    get_all_conversations_title,
     delete_conversation
 )
 
@@ -32,19 +32,25 @@ def create_new_conversation():
             "error": str(e)
         }), 500
 
+
+
 @conversations_bp.route("/api/conversations", methods=["GET"])
 def get_conversations():
     try:
         limit = int(request.args.get('limit', 20))
         skip = int(request.args.get('skip', 0))
         
-        conversations = get_all_conversations(limit=limit, skip=skip)
-        
-        return jsonify({
+        conversations = get_all_conversations_title(limit=limit, skip=skip)
+
+
+        ans = jsonify({
             "success": True,
             "conversations": conversations,
             "count": len(conversations)
         }), 200
+
+
+        return ans
         
     except Exception as e:
         print(f"Error fetching conversations: {e}")

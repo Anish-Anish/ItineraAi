@@ -543,14 +543,14 @@ def format_itinerary_with_llm(itinerary_data, user_query):
                 "lat": 15.0,
                 "long": 73.9,
                 "description": "very crisp description",
-                "estimated_time_spent": "2 hours"
+                "estimated_time_spent": "2 hours",
             }},
             {{
                 "spot_name": "Goosebumps Virtual Escape",
                 "lat": 15.1,
                 "long": 73.95,
                 "description": "very crisp description",
-                "estimated_time_spent": "1.5 hours"
+                "estimated_time_spent": "1.5 hours",
             }}],
             "Day 2":[ ... ],
             "Day n":[ ... ]
