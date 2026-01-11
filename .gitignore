@@ -314,6 +314,10 @@ keys/
 !tsconfig.json
 !tsconfig.node.json
 
+# Allow lib directory and its contents
+!src/lib/
+!src/lib/utils.ts
+
 # Service account files
 *service-account*
 *credentials*
