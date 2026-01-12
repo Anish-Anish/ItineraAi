@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 
 import requests
@@ -8,8 +9,8 @@ def search_flights(origin, destination, departure_date, passengers='1', travel_c
 
     print(f" Searching flights from {origin} to {destination} on {departure_date}")
     
-    client_id = 'REMOVED_API_KEY'
-    client_secret = 'REMOVED_SECRET'
+    client_id = os.getenv('AMADEUS_CLIENT_ID')
+    client_secret = os.getenv('AMADEUS_CLIENT_SECRET')
     usd_to_inr_rate = 88.23
     
     try:
