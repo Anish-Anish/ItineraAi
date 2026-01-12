@@ -4,7 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Component, ErrorInfo, ReactNode } from "react";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
 import ChatPage from "./pages/ChatPage";
 import FlightBooking from "./pages/FlightBooking";
 import BusBooking from "./pages/BusRoutes";
@@ -67,24 +69,27 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/flights" element={<FlightBooking />} />
-            <Route path="/bus" element={<BusBooking />} />
-            <Route path="/hotels" element={<HotelBooking />} />
-            <Route path="/map" element={<MapView />} />
-            <Route path="/holiday" element={<HolidayPage />} />
-            <Route
-              path="/destination/:id"
-              element={<DestinationDetailPage />}
-            />
-            <Route path="/know-more" element={<KnowMorePage />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID"}>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/chat" element={<ChatPage />} />
+              <Route path="/flights" element={<FlightBooking />} />
+              <Route path="/bus" element={<BusBooking />} />
+              <Route path="/hotels" element={<HotelBooking />} />
+              <Route path="/map" element={<MapView />} />
+              <Route path="/holiday" element={<HolidayPage />} />
+              <Route
+                path="/destination/:id"
+                element={<DestinationDetailPage />}
+              />
+              <Route path="/know-more" element={<KnowMorePage />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </GoogleOAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   </ErrorBoundary>

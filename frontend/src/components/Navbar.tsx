@@ -7,6 +7,7 @@ import {
   Info,
   Building2,
   LogOut,
+  LogIn,
   ChevronDown,
   Menu,
   X,
@@ -50,7 +51,7 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("travel_planner_user");
     setIsProfileOpen(false);
     // Optionally redirect to home or login page
     window.location.href = "/";
@@ -101,11 +102,10 @@ const Navbar = () => {
               <Link key={item.path} to={item.path}>
                 <motion.div
                   whileHover={{ scale: 1.05, y: -2 }}
-                  className={`flex flex-col items-center gap-1 cursor-pointer transition-colors ${
-                    isActive
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`flex flex-col items-center gap-1 cursor-pointer transition-colors ${isActive
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   <Icon className="w-5 h-5" />
                   <span className="text-xs font-medium">{item.label}</span>
@@ -153,11 +153,10 @@ const Navbar = () => {
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         <div
-                          className={`flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors ${
-                            isActive
-                              ? "text-primary bg-primary/5"
-                              : "text-foreground"
-                          }`}
+                          className={`flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors ${isActive
+                            ? "text-primary bg-primary/5"
+                            : "text-foreground"
+                            }`}
                         >
                           <Icon className="w-5 h-5" />
                           <span className="text-sm font-medium">
@@ -181,14 +180,21 @@ const Navbar = () => {
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             className="flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors cursor-pointer"
           >
-            <User className="w-5 h-5 text-primary" />
+            {user?.picture ? (
+              <img
+                src={user.picture}
+                alt={user.name}
+                className="w-5 h-5 rounded-full object-cover"
+              />
+            ) : (
+              <User className="w-5 h-5 text-primary" />
+            )}
             <span className="text-sm font-medium text-primary">
               {user?.name || "Guest"}
             </span>
             <ChevronDown
-              className={`w-4 h-4 text-primary transition-transform ${
-                isProfileOpen ? "rotate-180" : ""
-              }`}
+              className={`w-4 h-4 text-primary transition-transform ${isProfileOpen ? "rotate-180" : ""
+                }`}
             />
           </motion.button>
 
@@ -203,13 +209,32 @@ const Navbar = () => {
                 className="absolute right-0 top-full mt-2 w-48 bg-background border border-border rounded-xl shadow-lg z-50 overflow-hidden"
               >
                 {/* Logout Button */}
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors text-left text-red-600"
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span className="text-sm font-medium">Logout</span>
-                </button>
+                {user ? (
+                  <>
+                    <div className="px-4 py-3 border-b border-border">
+                      <p className="text-sm font-semibold truncate">{user.name}</p>
+                      <p className="text-xs text-muted-foreground truncate" title={user.email}>
+                        {user.email}
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors text-left text-red-600"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      <span className="text-sm font-medium">Logout</span>
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted transition-colors text-left text-foreground"
+                  >
+                    <LogIn className="w-5 h-5" />
+                    <span className="text-sm font-medium">Login</span>
+                  </Link>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

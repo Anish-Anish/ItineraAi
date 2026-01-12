@@ -54,6 +54,13 @@ const LandingPage = () => {
   ];
 
   const handleSearch = () => {
+    // Check login first
+    const user = localStorage.getItem("travel_planner_user");
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
     if (searchQuery.trim()) {
       navigate(`/chat?query=${encodeURIComponent(searchQuery.trim())}`);
     } else {

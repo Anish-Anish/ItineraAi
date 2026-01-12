@@ -20,7 +20,9 @@ def create_app(config_name='development'):
     from app.api.hotels import hotels_bp
     from app.api.buses import buses_bp
     from app.api.plans import plans_bp
+    from app.api.plans import plans_bp
     from app.api.follow_up import follow_up_gen
+    from app.api.users import users_bp
     
     app.register_blueprint(chat_bp)
     app.register_blueprint(conversations_bp)
@@ -29,6 +31,7 @@ def create_app(config_name='development'):
     app.register_blueprint(buses_bp)
     app.register_blueprint(plans_bp)
     app.register_blueprint(follow_up_gen)
+    app.register_blueprint(users_bp)
     
     print(" All blueprints registered")
     

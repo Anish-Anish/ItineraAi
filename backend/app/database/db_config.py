@@ -30,3 +30,8 @@ def get_conversations_collection():
 
 def get_messages_collection():
     return chat_messages_collection
+
+users_collection = db["users"] if db is not None else None
+
+def get_users_collection():
+    return users_collection

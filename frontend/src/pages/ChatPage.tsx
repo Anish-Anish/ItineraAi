@@ -35,6 +35,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   type Conversation,
   type Message,
+  getUser,
 } from "@/lib/localStorage";
 
 // --- START: Define Itinerary Types and Mock Data ---
@@ -397,6 +398,14 @@ const ChatPage = () => {
   const handleSendMessage = async (text?: string) => {
     if (isLoading) return;
     const messageText = text || input.trim();
+
+    // Check if user is logged in
+    const user = getUser();
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
     if (!messageText) return;
 
     // Check word limit
