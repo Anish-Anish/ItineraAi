@@ -114,7 +114,7 @@ const AccommodationCard = ({
       console.log("Sending hotel data to API:", hotelPayload);
 
       // Send hotel data to finalize API
-      const response = await fetch("http://localhost:8089/api/finalize-plan", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}/api/finalize-plan`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -169,13 +169,12 @@ const AccommodationCard = ({
         {[...Array(5)].map((_, i) => (
           <Star
             key={i}
-            className={`w-4 h-4 ${
-              i < fullStars
+            className={`w-4 h-4 ${i < fullStars
                 ? "fill-yellow-400 text-yellow-400"
                 : i === fullStars && hasHalfStar
-                ? "fill-yellow-400/50 text-yellow-400"
-                : "text-gray-300"
-            }`}
+                  ? "fill-yellow-400/50 text-yellow-400"
+                  : "text-gray-300"
+              }`}
           />
         ))}
         <span className="text-sm font-semibold ml-1">{rating.toFixed(1)}</span>
@@ -220,21 +219,20 @@ const AccommodationCard = ({
           delay: index * 0.1,
           opacity: isEnhancing
             ? {
-                duration: 1.5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }
             : {},
         }}
         className="flex-shrink-0 w-[320px] h-[400px]"
       >
         <div className="space-y-3">
           <Card
-            className={`${bgColor} ${borderColor} ${shadowColor} border-2 hover:shadow-2xl transition-all duration-300 p-4 sm:p-5 relative h-full flex flex-col rounded-2xl overflow-hidden ${
-              isEnhancing
+            className={`${bgColor} ${borderColor} ${shadowColor} border-2 hover:shadow-2xl transition-all duration-300 p-4 sm:p-5 relative h-full flex flex-col rounded-2xl overflow-hidden ${isEnhancing
                 ? "ring-4 ring-primary ring-offset-2 animate-pulse"
                 : ""
-            }`}
+              }`}
           >
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-40 h-40 bg-white/30 rounded-full blur-3xl -z-0" />

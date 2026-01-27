@@ -76,7 +76,7 @@ const FlightCard = ({
   const handleBookNow = async () => {
     try {
       // Send flight data to finalize API
-      const response = await fetch("http://localhost:8089/api/finalize-plan", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}/api/finalize-plan`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -153,14 +153,14 @@ const FlightCard = ({
       flight.carrier === "AI"
         ? "Air India"
         : flight.carrier === "6E"
-        ? "IndiGo"
-        : flight.carrier === "SG"
-        ? "SpiceJet"
-        : flight.carrier === "UK"
-        ? "Vistara"
-        : flight.carrier === "G8"
-        ? "Go First"
-        : flight.carrier,
+          ? "IndiGo"
+          : flight.carrier === "SG"
+            ? "SpiceJet"
+            : flight.carrier === "UK"
+              ? "Vistara"
+              : flight.carrier === "G8"
+                ? "Go First"
+                : flight.carrier,
     logo: "", // FlightPayment expects this field
     departureTime: flight.departure_time,
     arrivalTime: flight.arrival_time,
@@ -203,14 +203,14 @@ const FlightCard = ({
                   {flight.carrier === "AI"
                     ? "Air India"
                     : flight.carrier === "6E"
-                    ? "IndiGo"
-                    : flight.carrier === "SG"
-                    ? "SpiceJet"
-                    : flight.carrier === "UK"
-                    ? "Vistara"
-                    : flight.carrier === "G8"
-                    ? "Go First"
-                    : flight.carrier}
+                      ? "IndiGo"
+                      : flight.carrier === "SG"
+                        ? "SpiceJet"
+                        : flight.carrier === "UK"
+                          ? "Vistara"
+                          : flight.carrier === "G8"
+                            ? "Go First"
+                            : flight.carrier}
                 </div>
                 <div className="text-xs text-muted-foreground font-medium">
                   {flight.flight_number} •{" "}
@@ -248,12 +248,12 @@ const FlightCard = ({
                       {flight.origin_iata === "MAA"
                         ? "Chennai (MAA)"
                         : flight.origin_iata === "DEL"
-                        ? "Delhi (DEL)"
-                        : flight.origin_iata === "BOM"
-                        ? "Mumbai (BOM)"
-                        : flight.origin_iata === "BLR"
-                        ? "Bangalore (BLR)"
-                        : `${flight.origin_iata}`}
+                          ? "Delhi (DEL)"
+                          : flight.origin_iata === "BOM"
+                            ? "Mumbai (BOM)"
+                            : flight.origin_iata === "BLR"
+                              ? "Bangalore (BLR)"
+                              : `${flight.origin_iata}`}
                     </div>
                   </div>
                 </div>
@@ -288,12 +288,12 @@ const FlightCard = ({
                       {flight.destination_iata === "MAA"
                         ? "Chennai (MAA)"
                         : flight.destination_iata === "DEL"
-                        ? "Delhi (DEL)"
-                        : flight.destination_iata === "BOM"
-                        ? "Mumbai (BOM)"
-                        : flight.destination_iata === "BLR"
-                        ? "Bangalore (BLR)"
-                        : `${flight.destination_iata}`}
+                          ? "Delhi (DEL)"
+                          : flight.destination_iata === "BOM"
+                            ? "Mumbai (BOM)"
+                            : flight.destination_iata === "BLR"
+                              ? "Bangalore (BLR)"
+                              : `${flight.destination_iata}`}
                     </div>
                   </div>
                 </div>
@@ -309,11 +309,10 @@ const FlightCard = ({
           <div className="space-y-3 mb-4">
             <div className="flex items-center justify-between">
               <span
-                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
-                  flight.is_direct
+                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${flight.is_direct
                     ? "bg-green-500/20 text-green-700"
                     : "bg-orange-500/20 text-orange-700"
-                }`}
+                  }`}
               >
                 {flight.is_direct ? "✈️ Non-stop" : "🔄 1 Stop"}
               </span>

@@ -155,7 +155,7 @@ const BusRoutes = () => {
     setBusRoutes([]); // Clear previous results
 
     try {
-      const response = await fetch("http://localhost:8089/api/bus-routes", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}/api/bus-routes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

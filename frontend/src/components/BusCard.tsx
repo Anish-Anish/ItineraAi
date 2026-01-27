@@ -90,7 +90,7 @@ const BusCard = ({
   const handleBookNow = async () => {
     try {
       // Send bus data to finalize API
-      const response = await fetch("http://localhost:8089/api/finalize-plan", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}/api/finalize-plan`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,9 +99,8 @@ const BusCard = ({
           cardIndex: index,
           planData: {
             type: "bus",
-            title: `Bus Route ${route.route_no}: ${
-              route.start || route.start_address
-            } to ${route.destination || route.end_address}`,
+            title: `Bus Route ${route.route_no}: ${route.start || route.start_address
+              } to ${route.destination || route.end_address}`,
             bus: {
               route_no: route.route_no,
               bus_type: route.bus_type,
@@ -204,9 +203,8 @@ const BusCard = ({
       >
         <div className="flex flex-col h-full space-y-3">
           <Card
-            className={`${bgColor} border-2 hover:shadow-lg transition-all p-4 sm:p-5 relative flex flex-col justify-between h-[420px] ${
-              isEnhancing ? "border-primary animate-pulse" : ""
-            }`}
+            className={`${bgColor} border-2 hover:shadow-lg transition-all p-4 sm:p-5 relative flex flex-col justify-between h-[420px] ${isEnhancing ? "border-primary animate-pulse" : ""
+              }`}
           >
             {/* HEADER */}
             <div>

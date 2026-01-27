@@ -69,9 +69,17 @@ const MapView: React.FC<MapViewProps> = ({ isOpen, onClose, itineraries }) => {
   const polylineRef = useRef<any>(null);
   const animationRef = useRef<number>();
 
+  // Read API key from environment variables
+  const googleMapsApiKey =
+    import.meta.env?.VITE_REACT_APP_GOOGLE_MAPS_API_KEY || "";
+  
+  // Development mode fallback
+  const isDevelopment = import.meta.env.DEV;
+  const useFallbackMap = !googleMapsApiKey && isDevelopment;
+
   const { isLoaded, loadError } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: import.meta.env?.VITE_REACT_APP_GOOGLE_MAPS_API_KEY || "",
+    googleMapsApiKey: useFallbackMap ? "demo-key" : googleMapsApiKey,
     libraries: [...LIBRARIES],
     preventGoogleFontsLoading: true,
   });
@@ -300,6 +308,87 @@ const MapView: React.FC<MapViewProps> = ({ isOpen, onClose, itineraries }) => {
       }
     };
   }, []);
+
+  if (useFallbackMap) {
+    return (
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+            onClick={onClose}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-background rounded-lg shadow-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="text-center mb-6">
+                <MapPin className="w-16 h-16 text-primary mx-auto mb-4" />
+                <h2 className="text-2xl font-bold mb-2">
+                  Development Mode - Map Preview
+                </h2>
+                <p className="text-muted-foreground mb-4">
+                  Google Maps API key not configured. Showing location list instead.
+                </p>
+                <div className="bg-muted rounded-lg p-3 text-left text-sm font-mono mb-4">
+                  <p className="text-muted-foreground mb-1"># To enable maps, add to .env file:</p>
+                  <p>VITE_REACT_APP_GOOGLE_MAPS_API_KEY=your_api_key</p>
+                </div>
+              </div>
+              
+              {/* Fallback: Show location list grouped by day */}
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {Object.entries(
+                  currentPlanLocations.reduce((acc, location) => {
+                    if (!acc[location.day]) acc[location.day] = [];
+                    acc[location.day].push(location);
+                    return acc;
+                  }, {} as Record<string, typeof currentPlanLocations>)
+                ).map(([day, locations]) => (
+                  <div key={day} className="border rounded-lg p-4">
+                    <h3 className="font-semibold text-lg mb-3 text-primary">
+                      {day}
+                    </h3>
+                    <div className="space-y-2">
+                      {locations.map((location, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-3 p-2 rounded hover:bg-muted/50 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="text-xs font-bold text-primary">
+                              {index + 1}
+                            </span>
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium">{location.spot_name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              📍 {Number(location.lat).toFixed(4)}, {Number(location.long).toFixed(4)}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="flex justify-end mt-6">
+                <Button onClick={onClose} className="w-full sm:w-auto">
+                  Close Preview
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    );
+  }
 
   if (loadError) return <div>Map failed to load</div>;
   if (!isLoaded) return <div>Loading map...</div>;

@@ -32,6 +32,7 @@ def generate_contextual_follow_ups(user_query: str, conversation_list) -> list:
                              ` to spain, 2 days`,
                              ` to goa, one week` like that.
             - do not ask any suggestion to the system.
+            - while suggesting dates suggest with near next future dates.
             
         Input:
             User query: {user_query}

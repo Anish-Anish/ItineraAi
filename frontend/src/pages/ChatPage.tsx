@@ -212,23 +212,21 @@ const ChatPage = () => {
   ]);
 
   const loadingMessages = [
-    "Translating user language → English...",
-    "Understood what you truly wants...",
-    "Turning your desires into a day-by-day travel plan...",
-    "Making you travel smoother, not longer.",
-    "Checking weather for your plan...",
-    "Polishing the plan with AI magic.",
-    "thinking...",
-    "Package everything into a share-worthy final plan",
+    "🔍 Unlocking what you really want...",
+    "✨ Highlighting spots you'll love...",
+    "🎯 Curating places that match your vibe...",
+    "🗺️ Finding the shortest paths and costs...",
+    "🌤️ Analyzing weather conditions at each spot...",
+    "🤖 Creating trip plans with AI magic...",
+    "⏳ Your trip plan is almost ready...",
+    "🎉 Finalizing your perfect trip...",
   ];
 
   const [dotCount, setDotCount] = useState(0);
 
   // Fetch conversation history from MongoDB
   const getApiBase = () => {
-    const protocol = window.location.protocol;
-    const originHost = window.location.hostname;
-    return `${protocol}//${originHost}:8089`;
+    return import.meta.env.VITE_BACKEND_URL || "http://localhost:8089";
   };
   const fetchConversationsFromDB = async () => {
     try {
@@ -332,7 +330,7 @@ const ChatPage = () => {
       }
 
       setFollowUpLoading(true);
-      const resp = await fetch("http://localhost:8089/api/follow_up", {
+      const resp = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}/api/follow_up`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -431,9 +429,11 @@ const ChatPage = () => {
       !messageText.toLowerCase().includes("accommodation");
 
     if (isItineraryPlanQuery) {
+      console.log("🚀 Starting trip planning sequence with steps");
       setIsLoading(true);
-      setLoadingStep(0);
+      setLoadingStep(0); // Start with first step
     } else {
+      console.log("💬 Starting general chat loading");
       setIsLoading(true);
       setLoadingStep(-1); // Use -1 to indicate simple loading
     }
@@ -444,35 +444,30 @@ const ChatPage = () => {
       let loadingInterval: NodeJS.Timeout | undefined;
 
       if (isItineraryPlanQuery) {
-        // Custom timing for each step
-        const stepTimings = [3000, 3000, 2000, 2000, 3000, 4000, 2000]; // [0-3s], [3-6s], [6-8s], [8-10s], [10-13s], [14-18s], [18-20s]
+        // Custom timing for each step - 3 seconds per step
+        const stepTimings = [3000, 3000, 3000, 3000, 3000, 3000, 3000]; // Each step shows for 3 seconds
         let currentStepIndex = 0;
 
         const scheduleNextStep = () => {
+          console.log(`📋 Current step index: ${currentStepIndex}, setting loading step to: ${currentStepIndex}`);
           if (currentStepIndex < stepTimings.length - 1) {
             setTimeout(() => {
-              setLoadingStep(currentStepIndex + 1);
+              setLoadingStep(currentStepIndex);
               currentStepIndex++;
               scheduleNextStep();
             }, stepTimings[currentStepIndex]);
           } else {
-            // After step 6 (thinking...), wait then start step 7 with dots
-            setTimeout(() => {
-              setLoadingStep(7);
-
-              // Start dots animation immediately
-              const dotInterval = setInterval(() => {
-                setDotCount((prev) => (prev + 1) % 4); // 0, 1, 2, 3 dots
-              }, 800); // Normal speed dots
-
-              // Store dot interval to clear it later
-              (window as any).dotInterval = dotInterval;
-            }, stepTimings[currentStepIndex]);
+            // After the last step (step 6), wait indefinitely until response comes
+            // Don't schedule any more steps - just wait for the backend response
+            console.log("⏳ Waiting at final step for backend response");
+            setLoadingStep(6); // Keep showing "Your trip plan is almost ready..."
           }
         };
 
-        // Start the sequence
-        scheduleNextStep();
+        // Start the sequence after a brief delay to show the first step
+        setTimeout(() => {
+          scheduleNextStep();
+        }, 100); // Small delay to ensure step 0 is visible
       }
 
       // Ensure conversation_id exists for this conversation
@@ -1261,7 +1256,7 @@ const ChatPage = () => {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Send plan details to backend API
-      const response = await fetch("http://localhost:8089/api/finalize-plan", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}/api/finalize-plan`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1371,7 +1366,7 @@ const ChatPage = () => {
         .filter((msg) => msg.role === "user")
         .map((msg) => msg.content);
 
-      const response = await fetch("http://localhost:8089/api/finalize-plan", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}/api/finalize-plan`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1506,7 +1501,7 @@ const ChatPage = () => {
 
       console.log("Itinerary Enhancement Request:", requestBody);
 
-      const response = await fetch("http://127.0.0.1:8089/api/enhance", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}/api/enhance`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1587,7 +1582,7 @@ const ChatPage = () => {
     } catch (error) {
       console.error("Itinerary Enhancement API Error:", error);
       addAssistantMessage(
-        "⚠️ Connection error during itinerary enhancement. Please ensure Flask server is running on http://127.0.0.1:8089."
+        `⚠️ Connection error during itinerary enhancement. Please ensure Flask server is running on ${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}.`
       );
     } finally {
       // Remove from enhancing set after delay to show completion
@@ -1612,7 +1607,7 @@ const ChatPage = () => {
 
       // Fetch messages for this conversation from MongoDB
       const response = await fetch(
-        `http://localhost:8089/api/conversations/${conversationId}/messages`
+        `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}/api/conversations/${conversationId}/messages`
       );
       const data = await response.json();
 
@@ -2072,7 +2067,7 @@ const ChatPage = () => {
 
                           // Call summarize API
                           const response = await fetch(
-                            "http://localhost:8089/api/summarize-plan",
+                            `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}/api/summarize-plan`,
                             {
                               method: "POST",
                               headers: {
@@ -2185,23 +2180,9 @@ const ChatPage = () => {
                   content={
                     loadingStep === -1
                       ? "Processing your request..."
-                      : loadingStep === 0
-                        ? "Analyzing your travel preferences..."
-                        : loadingStep === 1
-                          ? "Searching for the best destinations..."
-                          : loadingStep === 2
-                            ? "Finding top-rated accommodations..."
-                            : loadingStep === 3
-                              ? "Checking flight availability..."
-                              : loadingStep === 4
-                                ? "Optimizing your itinerary routes..."
-                                : loadingStep === 5
-                                  ? "Calculating budget estimates..."
-                                  : loadingStep === 6
-                                    ? "Thinking..."
-                                    : loadingStep === 7
-                                      ? `Finalizing your perfect trip${".".repeat(dotCount)}`
-                                      : "Processing..."
+                      : loadingStep >= 0 && loadingStep < loadingMessages.length
+                        ? loadingMessages[loadingStep]
+                        : "Processing..."
                   }
                   isLoading={true}
                 />

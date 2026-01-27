@@ -119,7 +119,7 @@ const ChatMessage = ({
                   }}
                 />
               </div>
-              <span className="text-gray-500 text-xs">AI is thinking...</span>
+              <span className="text-gray-500 text-xs">{content || "AI is thinking..."}</span>
             </div>
           ) : (
             <MarkdownRenderer

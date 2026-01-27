@@ -95,7 +95,7 @@ const FlightBooking = () => {
     }, 100);
 
     try {
-      const response = await fetch("http://localhost:8089/api/flights", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8089'}/api/flights`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
